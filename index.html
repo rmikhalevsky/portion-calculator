@@ -105,7 +105,7 @@
     
     <div class="form-group">
         <label for="portionSize">Вага / розмір однієї порції</label>
-        <input type="number" id="portionSize" step="any" placeholder="Введіть вагу для розрахунку..." oninput="calculateWeights()" autofocus>
+        <input type="number" id="portionSize" step="any" placeholder="Введіть вагу для розрахунку..." oninput="onPortionSizeChange()" autofocus>
     </div>
     
     <div class="results-box">
@@ -127,19 +127,34 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'portionCalculatorGroupSizes';
+    const STORAGE_KEY_GROUP_SIZES = 'portionCalculatorGroupSizes';
+    const STORAGE_KEY_PORTION_SIZE = 'portionCalculatorPortionSize';
 
     function saveGroupSizes(value) {
-        localStorage.setItem(STORAGE_KEY, value);
+        localStorage.setItem(STORAGE_KEY_GROUP_SIZES, value);
     }
 
     function loadGroupSizes() {
-        return localStorage.getItem(STORAGE_KEY) || '16, 12, 9, 4';
+        return localStorage.getItem(STORAGE_KEY_GROUP_SIZES) || '16, 12, 9, 4';
+    }
+
+    function savePortionSize(value) {
+        localStorage.setItem(STORAGE_KEY_PORTION_SIZE, value);
+    }
+
+    function loadPortionSize() {
+        return localStorage.getItem(STORAGE_KEY_PORTION_SIZE) || '';
     }
 
     function onGroupSizesChange() {
         const input = document.getElementById('groupSizes');
         saveGroupSizes(input.value);
+        calculateWeights();
+    }
+
+    function onPortionSizeChange() {
+        const input = document.getElementById('portionSize');
+        savePortionSize(input.value);
         calculateWeights();
     }
 
@@ -192,7 +207,11 @@
     // Run once on load to restore saved values
     window.onload = function() {
         const groupSizesInput = document.getElementById('groupSizes');
+        const portionSizeInput = document.getElementById('portionSize');
+        
         groupSizesInput.value = loadGroupSizes();
+        portionSizeInput.value = loadPortionSize();
+        
         calculateWeights();
     };
 </script>
