@@ -99,7 +99,7 @@
     
     <div class="form-group">
         <label for="groupSizes">Розміри груп (кількість людей)</label>
-        <input type="text" id="groupSizes" value="16, 12, 9, 4" placeholder="напр. 16, 12, 9, 4" oninput="calculateWeights()">
+        <input type="text" id="groupSizes" placeholder="напр. 16, 12, 9, 4" oninput="onGroupSizesChange()">
         <div class="text-muted">Розділяйте числа комами</div>
     </div>
     
@@ -127,6 +127,22 @@
 </div>
 
 <script>
+    const STORAGE_KEY = 'portionCalculatorGroupSizes';
+
+    function saveGroupSizes(value) {
+        localStorage.setItem(STORAGE_KEY, value);
+    }
+
+    function loadGroupSizes() {
+        return localStorage.getItem(STORAGE_KEY) || '16, 12, 9, 4';
+    }
+
+    function onGroupSizesChange() {
+        const input = document.getElementById('groupSizes');
+        saveGroupSizes(input.value);
+        calculateWeights();
+    }
+
     function calculateWeights() {
         const groupSizesInput = document.getElementById('groupSizes').value;
         const portionSizeInput = parseFloat(document.getElementById('portionSize').value);
@@ -173,8 +189,12 @@
         });
     }
 
-    // Run once on load to show initial states if inputs are pre-filled
-    window.onload = calculateWeights;
+    // Run once on load to restore saved values
+    window.onload = function() {
+        const groupSizesInput = document.getElementById('groupSizes');
+        groupSizesInput.value = loadGroupSizes();
+        calculateWeights();
+    };
 </script>
 
 </body>
