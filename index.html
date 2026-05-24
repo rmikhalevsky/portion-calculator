@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор ваги порцій</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #111;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #fafafa;
+        }
+        input:focus {
+            border-color: #0066cc;
+            outline: none;
+            background-color: #fff;
+        }
+        .results-box {
+            margin-top: 25px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        .results-box h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+        }
+        td {
+            font-size: 16px;
+        }
+        .text-muted {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .placeholder-text {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Калькулятор ваги порцій</h1>
+    
+    <div class="form-group">
+        <label for="groupSizes">Розміри груп (кількість людей)</label>
+        <input type="text" id="groupSizes" value="16, 12, 9, 4" placeholder="напр. 16, 12, 9, 4" oninput="calculateWeights()">
+        <div class="text-muted">Розділяйте числа комами</div>
+    </div>
+    
+    <div class="form-group">
+        <label for="portionSize">Вага / розмір однієї порції</label>
+        <input type="number" id="portionSize" step="any" placeholder="Введіть вагу для розрахунку..." oninput="calculateWeights()" autofocus>
+    </div>
+    
+    <div class="results-box">
+        <h2>Загальна вага</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Розмір групи</th>
+                    <th>Загальна вага</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTableBody">
+                <tr>
+                    <td colspan="2" class="placeholder-text">Введіть вагу порції вище, щоб побачити результати.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function calculateWeights() {
+        const groupSizesInput = document.getElementById('groupSizes').value;
+        const portionSizeInput = parseFloat(document.getElementById('portionSize').value);
+        const tableBody = document.getElementById('resultsTableBody');
+        
+        // If portion size is empty or invalid, clear table and show instruction
+        if (isNaN(portionSizeInput) || portionSizeInput <= 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="2" class="placeholder-text">Введіть вагу порції вище, щоб побачити результати.</td>
+                </tr>
+            `;
+            return;
+        }
+        
+        // Parse the comma-separated string into an array of numbers
+        const sizes = groupSizesInput.split(',')
+            .map(item => parseFloat(item.trim()))
+            .filter(item => !isNaN(item));
+            
+        if (sizes.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="2" class="placeholder-text">Будь ласка, вкажіть коректні розміри груп.</td>
+                </tr>
+            `;
+            return;
+        }
+        
+        // Clear table before rendering new live data
+        tableBody.innerHTML = '';
+        
+        // Generate rows instantly
+        sizes.forEach(size => {
+            const totalWeight = size * portionSizeInput;
+            const formattedWeight = Number(totalWeight.toFixed(2));
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${size}</strong> осіб</td>
+                <td>${formattedWeight}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Run once on load to show initial states if inputs are pre-filled
+    window.onload = calculateWeights;
+</script>
+
+</body>
+</html>
