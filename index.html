@@ -105,7 +105,7 @@
     
     <div class="form-group">
         <label for="portionSize">Вага / розмір однієї порції</label>
-        <input type="number" id="portionSize" step="any" placeholder="Введіть вагу для розрахунку..." oninput="onPortionSizeChange()" onfocus="this.select()" autofocus>
+        <input type="number" id="portionSize" step="any" placeholder="Введіть вагу для розрахунку..." oninput="onPortionSizeChange()" onfocus="selectPortionSize(this)" autofocus>
     </div>
     
     <div class="results-box">
@@ -144,6 +144,13 @@
 
     function loadPortionSize() {
         return localStorage.getItem(STORAGE_KEY_PORTION_SIZE) || '';
+    }
+
+    function selectPortionSize(input) {
+        // Use setTimeout to delay selection for iOS compatibility
+        setTimeout(() => {
+            input.setSelectionRange(0, input.value.length);
+        }, 0);
     }
 
     function onGroupSizesChange() {
